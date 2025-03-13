@@ -1,4 +1,10 @@
-from ..util import Song, SongType, LevelIndex, Notes, SongDifficulty
+from ..util import (
+    Song,
+    SongType,
+    LevelIndex,
+    Notes,
+    SongDifficulty,
+)
 from typing import Literal
 
 
@@ -23,15 +29,17 @@ def extract_notes(
     difficulty: (
         LevelIndex | Literal["basic", "advanced", "expert", "master", "re_master"]
     ),
-    type: SongType | Literal["dx", "standard", "utage"] = None,
+    type: SongType | Literal["dx", "standard"] = None,
 ) -> Notes:
     """
     获取指定曲目的Notes
+    暂不支持utage
     """
-    difficulty = str_to_difficulty(difficulty)
+    if isinstance(difficulty, str):
+        difficulty = str_to_difficulty(difficulty)
     difficulties = song.difficulties
 
-    def get_notes(difficulty_list: list[SongDifficulty]):
+    def get_notes(difficulty_list: list[SongDifficulty]) -> Notes:
         for diff in difficulty_list:
             if diff.difficulty == difficulty:
                 return diff.notes
@@ -120,10 +128,11 @@ def get_achievement_loss_from_song(
     ),
     note_type: Literal["tap", "hold", "slide", "break"],
     accuracy: Literal["critical_perfect", "perfect", "great", "good", "miss"],
-    song_type: SongType | Literal["dx", "standard", "utage"] = None,
+    song_type: SongType | Literal["dx", "standard"] = None,
 ) -> tuple[float] | tuple[float, float] | tuple[float, float, float]:
     """
     获取指定曲目指定Note类型在不同判定的达成率损失
+    暂不支持utage
     """
     notes = extract_notes(song, difficulty, song_type)
     return get_achievement_loss_from_notes(notes, note_type, accuracy)
@@ -157,13 +166,15 @@ def get_total_achievement_loss_from_song(
         LevelIndex | Literal["basic", "advanced", "expert", "master", "re_master"]
     ),
     loss_dict: dict[str, dict[str, int]],
-    song_type: SongType | Literal["dx", "standard", "utage"] = None,
+    song_type: SongType | Literal["dx", "standard"] = None,
 ) -> tuple[float, float]:
     """
     获取指定曲目在loss_dict情况下的达成率损失
 
     - loss_dict: 未达到满达成率的物量配置 e.g. {"tap":{"miss":1},"break":{"perfect":1}}
     返回值: (达成率损失下限,达成率损失上限)
+
+    暂不支持utage
     """
     notes = extract_notes(song, difficulty, song_type)
     return get_total_achievement_loss_from_notes(notes, loss_dict)
