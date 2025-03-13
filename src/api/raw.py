@@ -44,13 +44,25 @@ def get_song_list(version: int = 24000, notes: bool = False) -> dict:
     return {"songs": songs, "genres": genres, "versions": versions}
 
 
-def get_song(song_id: int, version: int = 24000) -> Song:
+def get_song_json(song_id: int, version: int = 24000) -> dict | None:
     """
     获取指定曲目信息
     """
     result = get_public_info(f"song/{song_id}?version={version}")
-    data = result.get("data", result)
-    return Song.from_dict(data)
+    if "data" not in result:
+        return None
+    data = result.get("data")
+    return data
+
+
+def get_song(song_id: int, version: int = 24000) -> Song | None:
+    """
+    获取指定曲目信息
+    """
+    song_json = get_song_json(song_id, version)
+    if song_json is None:
+        return None
+    return Song.from_dict(song_json)
 
 
 def get_alias_list() -> list[Alias]:
