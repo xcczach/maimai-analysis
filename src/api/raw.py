@@ -49,10 +49,9 @@ def get_song_json(song_id: int, version: int = 24000) -> dict | None:
     获取指定曲目信息
     """
     result = get_public_info(f"song/{song_id}?version={version}")
-    if "data" not in result:
+    if "code" in result and result["code"] == 404:
         return None
-    data = result.get("data")
-    return data
+    return result
 
 
 def get_song(song_id: int, version: int = 24000) -> Song | None:
