@@ -27,7 +27,7 @@ def str_to_difficulty(difficulty: str) -> LevelIndex:
 def extract_notes(
     song: Song,
     difficulty: (
-        LevelIndex | Literal["basic", "advanced", "expert", "master", "re_master"]
+        LevelIndex | Literal["basic", "advanced", "expert", "master", "re_master"] | int
     ),
     type: SongType | Literal["dx", "standard"] = None,
 ) -> Notes:
@@ -37,11 +37,13 @@ def extract_notes(
     """
     if isinstance(difficulty, str):
         difficulty = str_to_difficulty(difficulty)
+    if isinstance(difficulty, int):
+        difficulty = LevelIndex(difficulty)
     difficulties = song.difficulties
 
     def get_notes(difficulty_list: list[SongDifficulty]) -> Notes:
         for diff in difficulty_list:
-            if diff.difficulty == difficulty:
+            if diff.difficulty.value == difficulty.value:
                 return diff.notes
         return None
 
