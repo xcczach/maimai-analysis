@@ -69,8 +69,7 @@ def get_alias_list() -> list[Alias]:
     获取曲目别名列表
     """
     result = get_public_info("alias/list")
-    data = result.get("data", result)
-    return Alias.from_list(data.get("aliases", []))
+    return Alias.from_list(result.get("aliases", []))
 
 
 # 以下接口中 Icon、Plate、Frame 均为 Collection 类型
